@@ -1,0 +1,60 @@
+Class:
+Grid
+
+Properties:
+private Cell[] cells;
+
+Constructor:
+public Grid(Element gridElement) {}
+
+Method:
+public Cell[] cells(){};
+public Cell[] cellsByRows(){};
+public Cell[] cellsByColumns(){};
+private Cell[] emptyCell(){};
+public Cell randomEmptyCell(){};
+private static Element[] createCellElements(Element gridElement){};
+
+Class:
+Cell
+
+Properties:
+private Element cellElement;
+private int x;
+private int y;
+private Tile tile;
+private Tile mergeTile;
+
+Constructor:
+public Cell(Element cellElement, int x, int y){};
+
+Method:
+public int x(){};
+public int y(){};
+public Tile tile(){};
+public void setTile(Tile tile){};
+public Tile mergeTile(){};
+public void setMergeTile(Tile tile){};
+public boolean canAccept(Tile tile){};
+public void mergeTiles(){};
+
+Class:
+Tile
+
+Properties:
+private Element tileElement;
+private int x;
+private int y;
+private int value;
+
+Constructor:
+public Tile(Element tileContainer){};
+public Tile(Element tileContainer, int value){};
+
+Method:
+public int value(){};
+public void setValue(){};
+public void setX(){};
+public void setY(){};
+public void remove(){};
+public Promise<?> waitForTransition(boolean animation);

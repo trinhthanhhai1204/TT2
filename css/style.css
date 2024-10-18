@@ -1,0 +1,115 @@
+:root {
+    --hb-row-gutter-x: 0.5rem;
+    --hb-body-background-color: #FBF8EF;
+    --hb-score-background-color: #BAAD9D;
+    --hb-score-color: #F9F0E9;
+}
+
+* {
+    font-family: Roboto, sans-serif;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    background-color: var(--hb-body-background-color);
+    height: 100vh;
+    font-size: 7.5vmin;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.layout {
+    width: 100%;
+    display: flex;
+}
+
+.score {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+.score h1 {
+    font-size: 6rem;
+    color: #766D66;
+}
+
+.score > div {
+    display: flex;
+    margin: 0 calc(var(--hb-row-gutter-x) * -1);
+}
+
+.score > div > div {
+    flex: 1;
+    padding: 0.5rem var(--hb-row-gutter-x);
+}
+
+.score > div > div > div {
+    background-color: var(--hb-score-background-color);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+.score > div > div > div > p {
+    font-weight: bold;
+    text-align: center;
+    color: var(--hb-score-color);
+    font-size: 1.5rem;
+}
+
+.main {
+    font-family: Arial, serif ;
+    flex-basis: fit-content;
+}
+
+.action {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+#game-board {
+    display: grid;
+    grid-template-rows: repeat(var(--grid-size), var(--cell-size));
+    grid-template-columns: repeat(var(--grid-size), var(--cell-size));
+    background-color: #CCCCCC;
+    gap: var(--cell-gap);
+    border-radius: 1vmin;
+    padding: var(--cell-gap);
+    position: relative;
+}
+
+.cell {
+    background-color: #AAAAAA;
+    border-radius: 1vmin;
+}
+
+.tile {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border-radius: 1vmin;
+    top: calc(var(--y) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
+    left: calc(var(--x) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
+    font-weight: bold;
+    background-color: var(--hb-tile-bg-color);
+    animation: show 200ms ease-in-out;
+    transition: 100ms ease-in-out;
+}
+
+@keyframes show {
+    0% {
+        opacity: 0.5;
+        transform: scale(0);
+    }
+}
