@@ -5,38 +5,76 @@
     <title>2048</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="./css/container.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/responsive.css">
     <script src="./js/index.js" type="module"></script>
 </head>
 <body>
-<div class="container">
-    <div class="layout">
-        <div class="score">
-            <h1>2048</h1>
-            <div>
-                <div>
-                    <div>
-                        <p>SCORE</p>
-                        <p id="current-score">0</p>
-                    </div>
+<div class="layout">
+    <div class="score">
+        <h1 id="score__game-title">2048</h1>
+        <div id="score__container">
+            <div id="score__current-score--container">
+                <div id="score__current-score--wrapper">
+                    <p id="score__current-score--title">SCORE</p>
+                    <p id="score__current-score--value">0</p>
                 </div>
-                <div>
-                    <div>
-                        <p>BEST</p>
-                        <p id="highest-score">0</p>
-                    </div>
+            </div>
+            <div id="score__highest-score--container">
+                <div id="score__highest-score--wrapper">
+                    <p id="score__highest-score--title">BEST</p>
+                    <p id="score__highest-score--value">0</p>
                 </div>
             </div>
         </div>
-        <div class="main">
-            <div id="game-board">
-
+        <div id="score__new-game--container">
+            <div id="score__new-game--wrapper">
+                <i id="score__new-game--icon" class="fa-solid fa-arrow-rotate-left"></i>
+                <button id="score__new-game--btn">New Game</button>
             </div>
         </div>
-        <div class="action">
+    </div>
+    <div class="main">
+        <div id="game-board">
 
+        </div>
+    </div>
+</div>
+<div id="new-game__modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Game</h5>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có muốn chơi lại từ đầu?</p>
+                <p>Tất cả quá trình chơi của bạn sẽ bị mất.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="accept">Đồng ý</button>
+                <button type="button" class="cancel" data-bs-dismiss="modal">Huỷ</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="you-lose__modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Game</h5>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có muốn chơi lại từ đầu?</p>
+                <p>Tất cả quá trình chơi của bạn sẽ bị mất.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="accept">Đồng ý</button>
+                <button type="button" class="cancel" data-bs-dismiss="modal">Huỷ</button>
+            </div>
         </div>
     </div>
 </div>

@@ -42,6 +42,19 @@ export default class Grid {
         const randomIndex = Math.floor(Math.random() * this.#emptyCell.length);
         return this.#emptyCell[randomIndex];
     }
+
+    clearAllCells() {
+        this.#cells.forEach(cell => {
+            if (cell.tile) {
+                cell.tile.remove();
+                cell.tile = null;
+            }
+            if (cell.mergeTile) {
+                cell.mergeTile.remove();
+                cell.mergeTile = null;
+            }
+        });
+    }
 }
 
 class Cell {

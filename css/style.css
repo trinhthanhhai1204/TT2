@@ -1,12 +1,19 @@
 :root {
     --hb-row-gutter-x: 0.5rem;
     --hb-body-background-color: #FBF8EF;
-    --hb-score-background-color: #BAAD9D;
-    --hb-score-color: #F9F0E9;
+    --hb-score-background-color: #EAE7D9;
+    --hb-score-color: #988878;
+    --hb-gameboard-background-color: #BBADA0;
+    --hb-cell-background-color: #CCC0B3;
+    --hb-tile-number-color-dark: #776E65;
+    --hb-tile-number-color-light: #F9F6F2;
+    --hb-new-game-icon-color: #937769;
+    --hb-new-game-btn-background-color: #937769;
+    --hb-new-game-btn-color: #FFF6EB;
 }
 
 * {
-    font-family: Roboto, sans-serif;
+    font-family: "Rubik", sans-serif;
 }
 
 *, *::before, *::after {
@@ -16,8 +23,8 @@
 
 body {
     background-color: var(--hb-body-background-color);
-    height: 100vh;
     font-size: 7.5vmin;
+    position: relative;
 }
 
 .container {
@@ -29,17 +36,27 @@ body {
 
 .layout {
     width: 100%;
+    /*overflow: hidden;*/
     display: flex;
+    flex-direction: column;
 }
 
 .score {
-    flex: 1;
     padding: 0 1rem;
+    flex-basis: min-content;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 2fr;
+    grid-template-areas: ". title new-game"
+                            "score score score";
 }
 
-.score h1 {
-    font-size: 6rem;
+#score__game-title {
+    font-size: 3rem;
+    font-weight: 700;
     color: #766D66;
+    grid-area: title;
+    text-align: center;
 }
 
 .score > div {
@@ -47,27 +64,51 @@ body {
     margin: 0 calc(var(--hb-row-gutter-x) * -1);
 }
 
-.score > div > div {
+#score__container {
+    grid-area: score;
+}
+
+#score__container > div {
     flex: 1;
     padding: 0.5rem var(--hb-row-gutter-x);
 }
 
-.score > div > div > div {
-    background-color: var(--hb-score-background-color);
-    border-radius: 0.25rem;
+#score__container > div > div {
+    border-radius: 0.875rem;
     padding: 0.5rem;
+    border: 0.1rem solid var(--hb-score-background-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.score > div > div > div > p {
-    font-weight: bold;
+#score__container > div:first-child > div {
+    background-color: var(--hb-score-background-color);
+}
+
+#score__container > div:last-child > div {
+    background-color: transparent;
+}
+
+#score__container > div > div > p {
     text-align: center;
     color: var(--hb-score-color);
-    font-size: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+#score__container > div > div > p:first-child {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+#score__container > div > div > p:last-child {
+    font-size: 1.25rem;
+    font-weight: 700;
 }
 
 .main {
-    font-family: Arial, serif ;
-    flex-basis: fit-content;
+    flex: 1;
 }
 
 .action {
@@ -75,19 +116,53 @@ body {
     padding: 0 1rem;
 }
 
+#score__new-game--container {
+    justify-content: flex-end;
+    grid-area: new-game;
+    align-items: center;
+}
+
+#score__new-game--wrapper {
+    padding: 0.5rem var(--hb-row-gutter-x);
+    height: min-content;
+    display: flex;
+}
+
+#score__new-game--icon {
+    font-size: 1.5rem;
+    color: var(--hb-new-game-icon-color);
+    margin-left: 0.5rem;
+    display: block;
+}
+
+#score__new-game--btn {
+    border: none;
+    display: none;
+    background-color: var(--hb-new-game-btn-background-color);
+    padding: 0.5rem 1rem;
+    color: var(--hb-new-game-btn-color);
+    font-weight: 400;
+    font-size: 1rem;
+    border-radius: 0.625rem;
+    margin-left: 0.5rem;
+}
+
 #game-board {
+    width: min-content;
+    height: min-content;
     display: grid;
     grid-template-rows: repeat(var(--grid-size), var(--cell-size));
     grid-template-columns: repeat(var(--grid-size), var(--cell-size));
-    background-color: #CCCCCC;
+    background-color: var(--hb-gameboard-background-color);
     gap: var(--cell-gap);
     border-radius: 1vmin;
     padding: var(--cell-gap);
     position: relative;
+    margin: 0 auto;
 }
 
 .cell {
-    background-color: #AAAAAA;
+    background-color: var(--hb-cell-background-color);
     border-radius: 1vmin;
 }
 
@@ -105,6 +180,7 @@ body {
     background-color: var(--hb-tile-bg-color);
     animation: show 200ms ease-in-out;
     transition: 100ms ease-in-out;
+    color: var(--hb-tile-number-color);
 }
 
 @keyframes show {

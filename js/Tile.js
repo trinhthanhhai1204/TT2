@@ -69,7 +69,8 @@ export default class Tile {
     set value(v) {
         this.#value = v;
         this.#tileElement.textContent = v;
-        this.#tileElement.style.setProperty("--hb-tile-bg-color", `${this.#color(parseInt(v))}`);
+        this.#tileElement.style.setProperty("--hb-tile-bg-color", `${this.#color(v)}`);
+        this.#tileElement.style.setProperty("--hb-tile-number-color", v <= 4 ? "var(--hb-tile-number-color-dark)": "var(--hb-tile-number-color-light)");
     }
 
     set x(value) {

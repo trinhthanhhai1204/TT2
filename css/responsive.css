@@ -1,0 +1,22 @@
+@media (min-width: 768px) {
+    #score__container > div > div {
+        flex-direction: column;
+    }
+
+    .score {
+        grid-template-rows: 1fr;
+        grid-template-areas: "title score new-game";
+    }
+
+    #score__game-title {
+        text-align: left;
+    }
+
+    #score__new-game--icon {
+        display: none;
+    }
+
+    #score__new-game--btn {
+        display: block;
+    }
+}
