@@ -15,6 +15,11 @@ const youLoseModalCancelEl = youLoseModalEl.querySelector("button.cancel");
 let highestScore = 0;
 let isLose = false;
 
+let xStart;
+let yStart;
+let xEnd;
+let yEnd;
+
 const grid = new Grid(gameBoard);
 
 setupHighestScore();
@@ -74,6 +79,7 @@ function closeNewGameModal() {
 
 function triggerYouLoseModal() {
     isLose = true;
+    unsetInput();
     triggerModal(youLoseModalEl);
 }
 
@@ -95,11 +101,17 @@ function newGame() {
 
 function unsetInput() {
     window.removeEventListener("keydown", handleInput);
+    gameBoard.removeEventListener("touchstart", touchStart);
+    gameBoard.removeEventListener("touchmove", touchMove);
+    gameBoard.removeEventListener("touchend", touchEnd);
 }
 
 function setupInput() {
     if (!isLose) {
         window.addEventListener("keydown", handleInput, {once: true});
+        gameBoard.addEventListener("touchstart", touchStart, {once: true});
+        gameBoard.addEventListener("touchmove", touchMove, {once: true});
+        gameBoard.addEventListener("touchend", touchEnd, {once: true});
     }
 }
 
@@ -156,44 +168,150 @@ function loadProcess() {
 }
 
 async function handleInput(e) {
-    switch (e.key) {
-        case "ArrowUp":
-            e.preventDefault();
-            if (!canMoveUp()) {
+    if (!isLose) {
+        switch (e.key) {
+            case "ArrowUp":
+                e.preventDefault();
+                if (!canMoveUp()) {
+                    setupInput();
+                    return;
+                }
+                await moveUp();
+                break;
+            case "ArrowDown":
+                e.preventDefault();
+                if (!canMoveDown()) {
+                    setupInput();
+                    return;
+                }
+                await moveDown();
+                break;
+            case "ArrowLeft":
+                e.preventDefault();
+                if (!canMoveLeft()) {
+                    setupInput();
+                    return;
+                }
+                await moveLeft();
+                break;
+            case "ArrowRight":
+                e.preventDefault();
+                if (!canMoveRight()) {
+                    setupInput();
+                    return;
+                }
+                await moveRight();
+                break;
+            default:
                 setupInput();
                 return;
-            }
-            await moveUp();
-            break;
-        case "ArrowDown":
-            e.preventDefault();
-            if (!canMoveDown()) {
+        }
+
+        performMove();
+    }
+    else {
+        console.log(e.key);
+    }
+}
+
+async function handleSwipe(direction) {
+    if (!isLose) {
+        switch (direction) {
+            case "UP":
+                if (!canMoveUp()) {
+                    setupInput();
+                    return;
+                }
+                await moveUp();
+                break;
+            case "DOWN":
+                if (!canMoveDown()) {
+                    setupInput();
+                    return;
+                }
+                await moveDown();
+                break;
+            case "LEFT":
+                if (!canMoveLeft()) {
+                    setupInput();
+                    return;
+                }
+                await moveLeft();
+                break;
+            case "RIGHT":
+                if (!canMoveRight()) {
+                    setupInput();
+                    return;
+                }
+                await moveRight();
+                break;
+            default:
                 setupInput();
                 return;
-            }
-            await moveDown();
-            break;
-        case "ArrowLeft":
-            e.preventDefault();
-            if (!canMoveLeft()) {
-                setupInput();
-                return;
-            }
-            await moveLeft();
-            break;
-        case "ArrowRight":
-            e.preventDefault();
-            if (!canMoveRight()) {
-                setupInput();
-                return;
-            }
-            await moveRight();
-            break;
-        default:
-            setupInput();
-            return;
+        }
+
+        performMove();
+    }
+    else {
+        console.log(direction);
+    }
+}
+
+function touchStart(e) {
+    xStart = e.touches[0].clientX;
+    yStart = e.touches[0].clientY;
+}
+
+function touchMove(e) {
+    e.preventDefault();
+}
+
+async function touchEnd(e) {
+    xEnd = e.changedTouches[0].clientX;
+    yEnd = e.changedTouches[0].clientY;
+
+    let xDiff = xEnd - xStart;
+    let yDiff = yEnd - yStart;
+
+    let direction;
+
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+        if (xDiff > 0) {
+            direction = "RIGHT";
+        } else {
+            direction = "LEFT";
+        }
+    } else {
+        if (yDiff > 0) {
+            direction = "DOWN";
+        } else {
+            direction = "UP";
+        }
     }
 
+    xStart = null;
+    yStart = null;
+
+    await handleSwipe(direction);
+}
+
+function moveUp() {
+    return slideTiles(grid.cellsByColumns);
+}
+
+function moveDown() {
+    return slideTiles(grid.cellsByColumns.map(column => [...column].reverse()));
+}
+
+function moveLeft() {
+    return slideTiles(grid.cellsByRows);
+}
+
+function moveRight() {
+    return slideTiles(grid.cellsByRows.map(row => [...row].reverse()));
+}
+
+function performMove() {
     grid.cells.forEach(cell => cell.mergeTiles());
 
     const newTile = new Tile(gameBoard);
@@ -211,22 +329,6 @@ async function handleInput(e) {
     updateScore();
     saveProcess();
     setupInput();
-}
-
-function moveUp() {
-    return slideTiles(grid.cellsByColumns);
-}
-
-function moveDown() {
-    return slideTiles(grid.cellsByColumns.map(column => [...column].reverse()));
-}
-
-function moveLeft() {
-    return slideTiles(grid.cellsByRows);
-}
-
-function moveRight() {
-    return slideTiles(grid.cellsByRows.map(row => [...row].reverse()));
 }
 
 function slideTiles(cells) {

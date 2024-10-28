@@ -1,8 +1,11 @@
+@media (min-width: 576px) {
+    :root {
+        --hb-tile-font-size: 1.6rem;
+    }
+}
+
 @media (min-width: 768px) {
     :root {
-        --hb-gameboard-size: 580px;
-        --hb-cell-size: 120px;
-        --hb-cell-gap: 20px;
         --hb-tile-font-size: 2rem;
     }
 

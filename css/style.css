@@ -10,10 +10,10 @@
     --hb-new-game-icon-color: #937769;
     --hb-new-game-btn-background-color: #937769;
     --hb-new-game-btn-color: #FFF6EB;
-    --hb-gameboard-size: 290px;
-    --hb-cell-size: 60px;
-    --hb-cell-gap: 10px;
     --hb-tile-font-size: 1rem;
+    --hb-cell-gap: calc(var(--hb-tile-font-size) * 5/8);
+    --hb-cell-size: calc(var(--hb-cell-gap) * 6);
+    --hb-gameboard-size: calc((var(--hb-cell-size) * 4) + (var(--hb-cell-gap) * 5));
 }
 
 * {
