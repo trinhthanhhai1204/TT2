@@ -1,4 +1,11 @@
 @media (min-width: 768px) {
+    :root {
+        --hb-gameboard-size: 580px;
+        --hb-cell-size: 120px;
+        --hb-cell-gap: 20px;
+        --hb-tile-font-size: 2rem;
+    }
+
     #score__container > div > div {
         flex-direction: column;
     }
@@ -18,5 +25,13 @@
 
     #score__new-game--btn {
         display: block;
+    }
+
+    .modal-footer {
+        flex-direction: row;
+    }
+
+    .modal-footer > div {
+        flex-basis: 50%;
     }
 }

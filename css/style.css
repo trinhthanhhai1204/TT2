@@ -10,6 +10,10 @@
     --hb-new-game-icon-color: #937769;
     --hb-new-game-btn-background-color: #937769;
     --hb-new-game-btn-color: #FFF6EB;
+    --hb-gameboard-size: 290px;
+    --hb-cell-size: 60px;
+    --hb-cell-gap: 10px;
+    --hb-tile-font-size: 1rem;
 }
 
 * {
@@ -36,7 +40,7 @@ body {
 
 .layout {
     width: 100%;
-    /*overflow: hidden;*/
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
@@ -109,6 +113,9 @@ body {
 
 .main {
     flex: 1;
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
 }
 
 .action {
@@ -148,15 +155,15 @@ body {
 }
 
 #game-board {
-    width: min-content;
-    height: min-content;
+    width: var(--hb-gameboard-size);
+    height: var(--hb-gameboard-size);
     display: grid;
-    grid-template-rows: repeat(var(--grid-size), var(--cell-size));
-    grid-template-columns: repeat(var(--grid-size), var(--cell-size));
+    grid-template-rows: repeat(4, var(--hb-cell-size));
+    grid-template-columns: repeat(4, var(--hb-cell-size));
     background-color: var(--hb-gameboard-background-color);
-    gap: var(--cell-gap);
+    gap: var(--hb-cell-gap);
     border-radius: 1vmin;
-    padding: var(--cell-gap);
+    padding: var(--hb-cell-gap);
     position: relative;
     margin: 0 auto;
 }
@@ -164,6 +171,8 @@ body {
 .cell {
     background-color: var(--hb-cell-background-color);
     border-radius: 1vmin;
+    width: var(--hb-cell-size);
+    height: var(--hb-cell-size);
 }
 
 .tile {
@@ -171,11 +180,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: var(--cell-size);
-    height: var(--cell-size);
+    width: var(--hb-cell-size);
+    height: var(--hb-cell-size);
+    font-size: var(--hb-tile-font-size);
     border-radius: 1vmin;
-    top: calc(var(--y) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
-    left: calc(var(--x) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
+    top: calc(var(--y) * (var(--hb-cell-size) + var(--hb-cell-gap)) + var(--hb-cell-gap));
+    left: calc(var(--x) * (var(--hb-cell-size) + var(--hb-cell-gap)) + var(--hb-cell-gap));
     font-weight: bold;
     background-color: var(--hb-tile-bg-color);
     animation: show 200ms ease-in-out;

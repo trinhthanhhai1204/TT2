@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>2048</title>
+    <link href="./images/2048.png" rel="icon" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
@@ -55,8 +56,12 @@
                 <p>Tất cả quá trình chơi của bạn sẽ bị mất.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="accept">Đồng ý</button>
-                <button type="button" class="cancel" data-bs-dismiss="modal">Huỷ</button>
+                <div>
+                    <button type="button" class="accept">Đồng ý</button>
+                </div>
+                <div>
+                    <button type="button" class="cancel" data-bs-dismiss="modal">Huỷ</button>
+                </div>
             </div>
         </div>
     </div>
@@ -65,15 +70,19 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">New Game</h5>
+                <h5 class="modal-title">You Lose</h5>
             </div>
             <div class="modal-body">
+                <p>Bạn đã thua</p>
                 <p>Bạn có muốn chơi lại từ đầu?</p>
-                <p>Tất cả quá trình chơi của bạn sẽ bị mất.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="accept">Đồng ý</button>
-                <button type="button" class="cancel" data-bs-dismiss="modal">Huỷ</button>
+                <div>
+                    <button type="button" class="accept">Đồng ý</button>
+                </div>
+                <div>
+                    <button type="button" class="cancel" data-bs-dismiss="modal">Xem lại trò chơi</button>
+                </div>
             </div>
         </div>
     </div>

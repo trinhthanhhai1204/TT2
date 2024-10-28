@@ -1,4 +1,4 @@
-import Grid from "./Grid.js";
+import Grid, {GRID_SIZE} from "./Grid.js";
 import Tile from "./Tile.js";
 
 const gameBoard = document.querySelector("#game-board");
@@ -8,6 +8,9 @@ const newGameEls = document.querySelectorAll("#score__new-game--wrapper > *");
 const newGameModalEl = document.querySelector("#new-game__modal");
 const newGameModalAcceptEl = newGameModalEl.querySelector("button.accept");
 const newGameModalCancelEl = newGameModalEl.querySelector("button.cancel");
+const youLoseModalEl = document.querySelector("#you-lose__modal");
+const youLoseModalAcceptEl = youLoseModalEl.querySelector("button.accept");
+const youLoseModalCancelEl = youLoseModalEl.querySelector("button.cancel");
 
 let highestScore = 0;
 let isLose = false;
@@ -15,41 +18,67 @@ let isLose = false;
 const grid = new Grid(gameBoard);
 
 setupHighestScore();
-newGame();
+loadProcess();
 
 newGameEls.forEach(newGameEl => {
     newGameEl.onclick = function () {
-        triggerModal();
+        triggerNewGameModal();
     }
 });
 
 newGameModalAcceptEl.onclick = () => {
     newGame();
-    closeModal();
+    closeNewGameModal();
 };
 
 newGameModalCancelEl.onclick = () => {
-    closeModal();
+    closeNewGameModal();
 };
 
-function triggerModal() {
-    newGameModalEl.classList.add("show");
+youLoseModalAcceptEl.onclick = function () {
+    newGame();
+    closeYouLoseModal();
+};
+
+youLoseModalCancelEl.onclick = function () {
+    closeYouLoseModal();
+};
+
+function triggerModal(element) {
+    element.classList.add("show");
     setTimeout(() => {
-        newGameModalEl.classList.add("showing");
-        unsetInput();
+        element.classList.add("showing");
     });
 }
 
-function closeModal() {
-    if (newGameModalEl.classList.contains("showing")) {
-        newGameModalEl.classList.remove("showing");
-        newGameModalEl.addEventListener("transitionend",() => {
-            if (newGameModalEl.classList.contains("show")) {
-                newGameModalEl.classList.remove("show");
+function closeModal(element) {
+    if (element.classList.contains("showing")) {
+        element.classList.remove("showing");
+        element.addEventListener("transitionend",() => {
+            if (element.classList.contains("show")) {
+                element.classList.remove("show");
             }
         }, {once: true});
     }
+}
+
+function triggerNewGameModal() {
+    triggerModal(newGameModalEl);
+    unsetInput();
+}
+
+function closeNewGameModal() {
+    closeModal(newGameModalEl);
     setupInput();
+}
+
+function triggerYouLoseModal() {
+    isLose = true;
+    triggerModal(youLoseModalEl);
+}
+
+function closeYouLoseModal() {
+    closeModal(youLoseModalEl);
 }
 
 function newGame() {
@@ -61,6 +90,7 @@ function newGame() {
 
     setupInput();
     updateScore();
+    saveProcess();
 }
 
 function unsetInput() {
@@ -94,6 +124,34 @@ function updateScore() {
         highestScore = score;
         localStorage.setItem("highest-score", score);
         highestScoreEl.innerHTML = `${score}`;
+    }
+}
+
+function saveProcess() {
+    let scoreMap = grid.cells.map(cell => cell.tile ? cell.tile.value : 0);
+    let s = JSON.stringify(scoreMap);
+    localStorage.setItem("game-board", s);
+}
+
+function clearProcess() {
+    localStorage.removeItem("game-board");
+}
+
+function loadProcess() {
+    let item = localStorage.getItem("game-board");
+    if (item !== null) {
+        let tiles = JSON.parse(item);
+        for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+            if (tiles[i] !== 0) {
+                grid.cells[i].tile = new Tile(gameBoard, tiles[i]);
+            }
+        }
+
+        setupInput();
+        updateScore();
+    }
+    else {
+        newGame();
     }
 }
 
@@ -144,13 +202,14 @@ async function handleInput(e) {
     if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
         updateScore();
         newTile.waitForTransition(true).then(() => {
-            alert("You lose");
-            isLose = true;
+            triggerYouLoseModal();
+            clearProcess();
         });
         return;
     }
 
     updateScore();
+    saveProcess();
     setupInput();
 }
 
