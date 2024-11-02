@@ -12,7 +12,15 @@ const youLoseModalEl = document.querySelector("#you-lose__modal");
 const youLoseModalAcceptEl = youLoseModalEl.querySelector("button.accept");
 const youLoseModalCancelEl = youLoseModalEl.querySelector("button.cancel");
 
+let actionUndoWrapperElement = document.querySelector("#action__undo-wrapper");
+let actionSwapWrapperElement = document.querySelector("#action__swap-wrapper");
+let actionDeleteWrapperElement = document.querySelector("#action__delete-wrapper");
+let actionUndoIconWrapperElement = actionUndoWrapperElement.querySelector(".action__help-icon-wrapper");
+let actionSwapIconWrapperElement = actionSwapWrapperElement.querySelector(".action__help-icon-wrapper");
+let actionDeleteIconWrapperElement = actionDeleteWrapperElement.querySelector(".action__help-icon-wrapper");
+
 let highestScore = 0;
+let currentScore = 0;
 let isLose = false;
 
 let xStart;
@@ -22,21 +30,25 @@ let yEnd;
 
 const grid = new Grid(gameBoard);
 
-setupHighestScore();
-loadProcess();
+function initial () {
+    setupHighestScore();
+    loadProcess();
+    setupHelps();
+}
 
-newGameEls.forEach(newGameEl => {
-    newGameEl.onclick = function () {
-        triggerNewGameModal();
+
+newGameEls.forEach(function (newGameEl) {
+    newGameEl.onclick = async function () {
+        await triggerNewGameModal();
     }
 });
 
-newGameModalAcceptEl.onclick = () => {
+newGameModalAcceptEl.onclick = function () {
     newGame();
     closeNewGameModal();
 };
 
-newGameModalCancelEl.onclick = () => {
+newGameModalCancelEl.onclick = function () {
     closeNewGameModal();
 };
 
@@ -49,17 +61,115 @@ youLoseModalCancelEl.onclick = function () {
     closeYouLoseModal();
 };
 
-function triggerModal(element) {
-    element.classList.add("show");
-    setTimeout(() => {
-        element.classList.add("showing");
+function setupHelps() {
+    setupUndo();
+    setupSwap();
+    setupDelete();
+}
+
+function setupUndo() {
+    actionUndoIconWrapperElement.onclick = function () {
+        let item = localStorage.getItem("game-board");
+        let scoresItem = localStorage.getItem("scores");
+
+        let storedGameBoard = item ? JSON.parse(item) : [];
+        let scores = scoresItem ? JSON.parse(scoresItem) : [];
+
+        if (storedGameBoard.length < 2 || scores.length < 2) {
+            return;
+        }
+
+        storedGameBoard.shift();
+        scores.shift();
+
+        /**
+         * @type {number[]}
+         */
+
+        let prevGameBoard = storedGameBoard[0];
+        let prevScore = scores[0];
+
+        setCurrentScore(prevScore);
+
+        loadGrid(prevGameBoard);
+
+        localStorage.setItem("game-board", JSON.stringify(storedGameBoard));
+        localStorage.setItem("scores", JSON.stringify(scores));
+    }
+}
+
+/**
+ *
+ * @param {number[]} tiles
+ */
+function loadGrid(tiles) {
+    grid.clearAllCells();
+    for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+        if (tiles[i] !== 0) {
+            grid.cells[i].tile = new Tile(gameBoard, tiles[i]);
+        }
+        else {
+            grid.cells[i].tile = null;
+        }
+    }
+}
+
+function setupSwap() {
+    console.log(actionSwapIconWrapperElement);
+}
+
+function setupDelete() {
+    console.log(actionDeleteIconWrapperElement);
+}
+
+
+/**
+ *
+ * @param {number} s
+ */
+function setCurrentScore(s) {
+    currentScore = s;
+    setCurrentScoreAction();
+}
+
+function setCurrentScoreAction() {
+    scoreEl.innerHTML = currentScore.toString();
+    if (currentScore > highestScore) {
+        setHighestScore(currentScore);
+    }
+}
+
+function setHighestScore(s) {
+    highestScore = s;
+    setHighestScoreAction();
+}
+
+function setHighestScoreAction() {
+    localStorage.setItem("highest-score", currentScore.toString());
+    highestScoreEl.innerHTML = currentScore.toString();
+}
+
+/**
+ * Kích hoạt modal
+ * @param {HTMLDivElement} element
+ */
+async function triggerModal(element) {
+    requestAnimationFrame(function () {
+        element.classList.add("show");
+        requestAnimationFrame(function () {
+            element.classList.add("showing");
+        });
     });
 }
 
+/**
+ * Đóng modal
+ * @param {HTMLDivElement} element
+ */
 function closeModal(element) {
     if (element.classList.contains("showing")) {
         element.classList.remove("showing");
-        element.addEventListener("transitionend",() => {
+        element.addEventListener("transitionend", function () {
             if (element.classList.contains("show")) {
                 element.classList.remove("show");
             }
@@ -67,8 +177,8 @@ function closeModal(element) {
     }
 }
 
-function triggerNewGameModal() {
-    triggerModal(newGameModalEl);
+async function triggerNewGameModal() {
+    await triggerModal(newGameModalEl);
     unsetInput();
 }
 
@@ -77,28 +187,36 @@ function closeNewGameModal() {
     setupInput();
 }
 
-function triggerYouLoseModal() {
+async function triggerYouLoseModal() {
     isLose = true;
     unsetInput();
-    triggerModal(youLoseModalEl);
+    await triggerModal(youLoseModalEl);
 }
 
 function closeYouLoseModal() {
     closeModal(youLoseModalEl);
 }
 
+/**
+ * Khởi tạo game mới
+ */
 function newGame() {
     isLose = false;
+    setCurrentScore(0);
+
+    clearProcess();
 
     grid.clearAllCells();
     grid.randomEmptyCell().tile = new Tile(gameBoard);
     grid.randomEmptyCell().tile = new Tile(gameBoard);
 
     setupInput();
-    updateScore();
     saveProcess();
 }
 
+/**
+ * Xoá các sự kiện chờ nhập - vuốt
+ */
 function unsetInput() {
     window.removeEventListener("keydown", handleInput);
     gameBoard.removeEventListener("touchstart", touchStart);
@@ -106,6 +224,9 @@ function unsetInput() {
     gameBoard.removeEventListener("touchend", touchEnd);
 }
 
+/**
+ * Tạo các sự kiện chờ nhập - vuốt
+ */
 function setupInput() {
     if (!isLose) {
         window.addEventListener("keydown", handleInput, {once: true});
@@ -115,58 +236,83 @@ function setupInput() {
     }
 }
 
-function setupHighestScore() {
-    if (isNaN(parseInt(localStorage.getItem("highest-score")))) {
-        localStorage.setItem("highest-score", "0");
-    }
 
-    highestScore = parseInt(localStorage.getItem("highest-score"));
-    highestScoreEl.innerHTML = `${highestScore}`;
-}
-
-function updateScore() {
-    let score = grid.cells.filter((cell) => {
-        return cell.tile !== null && cell.tile !== undefined;
-    }).map(cell => {
-        return cell.tile.value;
-    }).reduce((a, b) => a + b, 0);
-    scoreEl.innerHTML = `${score}`;
-
-    if (score > highestScore) {
-        highestScore = score;
-        localStorage.setItem("highest-score", score);
-        highestScoreEl.innerHTML = `${score}`;
-    }
-}
-
+/**
+ * Lưu quá trình chơi sau mỗi nước đi vào localStorage
+ */
 function saveProcess() {
-    let scoreMap = grid.cells.map(cell => cell.tile ? cell.tile.value : 0);
-    let s = JSON.stringify(scoreMap);
-    localStorage.setItem("game-board", s);
+    let item = localStorage.getItem("game-board");
+    let scoresItem = localStorage.getItem("scores");
+
+    let moves = item ? JSON.parse(item) : [];
+    let scores = scoresItem ? JSON.parse(scoresItem) : [];
+
+    let scoreMap = grid.cells.map(cell => {
+        return cell.tile ? cell.tile.value : 0;
+    });
+
+    moves.unshift(scoreMap);
+    scores.unshift(currentScore);
+
+    while (moves.length > 3) {
+        moves.pop();
+    }
+
+    while (scores.length > 3) {
+        scores.pop();
+    }
+
+    localStorage.setItem("game-board", JSON.stringify(moves));
+    localStorage.setItem("scores", JSON.stringify(scores));
 }
 
+/**
+ * Xoá quá trình chơi khỏi localStorage
+ */
 function clearProcess() {
     localStorage.removeItem("game-board");
+    localStorage.removeItem("scores");
 }
 
+/**
+ * Tải quá trình chơi từ localStorage, hoặc bắt đầu game mới nếu như không tìm thấy quá trình chơi
+ */
 function loadProcess() {
     let item = localStorage.getItem("game-board");
     if (item !== null) {
-        let tiles = JSON.parse(item);
-        for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-            if (tiles[i] !== 0) {
-                grid.cells[i].tile = new Tile(gameBoard, tiles[i]);
-            }
-        }
+        let scoreItem = localStorage.getItem("scores");
+        let scores = scoreItem ? JSON.parse(scoreItem) : [0];
+        setCurrentScore(scores[0]);
+
+        let moves = JSON.parse(item);
+        let tiles = moves[0];
+
+        loadGrid(tiles);
 
         setupInput();
-        updateScore();
     }
     else {
         newGame();
     }
 }
 
+/**
+ * Lấy điểm cao nhất từ localStorage và hiển thị điểm cao nhất lên giao diện
+ */
+function setupHighestScore() {
+    if (isNaN(parseInt(localStorage.getItem("highest-score")))) {
+        localStorage.setItem("highest-score", "0");
+    }
+
+    highestScore = parseInt(localStorage.getItem("highest-score"));
+    highestScoreEl.innerHTML = highestScore.toString();
+}
+
+
+/**
+ * Tạo sự kiện nhập từ bàn phím
+ * @param {KeyboardEvent} e
+ */
 async function handleInput(e) {
     if (!isLose) {
         switch (e.key) {
@@ -214,6 +360,10 @@ async function handleInput(e) {
     }
 }
 
+/**
+ * Tạo sự kiện vuốt
+ * @param {String} direction
+ */
 async function handleSwipe(direction) {
     if (!isLose) {
         switch (direction) {
@@ -262,6 +412,10 @@ function touchStart(e) {
     yStart = e.touches[0].clientY;
 }
 
+/**
+ * Huỷ bỏ thao tác di chuyển màn hình khi di chuyển bảng trò chơi
+ * @param {Event} e
+ */
 function touchMove(e) {
     e.preventDefault();
 }
@@ -300,7 +454,9 @@ function moveUp() {
 }
 
 function moveDown() {
-    return slideTiles(grid.cellsByColumns.map(column => [...column].reverse()));
+    return slideTiles(grid.cellsByColumns.map(function (column) {
+        return [...column].reverse();
+    }));
 }
 
 function moveLeft() {
@@ -308,32 +464,50 @@ function moveLeft() {
 }
 
 function moveRight() {
-    return slideTiles(grid.cellsByRows.map(row => [...row].reverse()));
+    return slideTiles(grid.cellsByRows.map(function (row) {
+        return [...row].reverse();
+    }));
 }
 
+/**
+ * Thực hiện ghép các ô, tạo ô mới, kiểm tra xem người chơi còn có thể chơi tiếp không, cập nhật điểm và lưu quá trình
+ */
 function performMove() {
-    grid.cells.forEach(cell => cell.mergeTiles());
+    let scores = grid.cells.map(function (cell) {
+        return cell.mergeTiles();
+    }).filter(function (score) {
+        return score !== 0;
+    });
+
+    let newScore = scores.reduce(function (previousValue, currentValue) {
+        return previousValue + currentValue;
+    }, currentScore);
+
+    setCurrentScore(newScore);
 
     const newTile = new Tile(gameBoard);
     grid.randomEmptyCell().tile = newTile;
 
     if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
-        updateScore();
-        newTile.waitForTransition(true).then(() => {
-            triggerYouLoseModal();
+        newTile.waitForTransition(true).then(async function () {
+            await triggerYouLoseModal();
             clearProcess();
         });
         return;
     }
 
-    updateScore();
     saveProcess();
     setupInput();
 }
 
+
+/**
+ * Di chuyển các hàng/cột
+ * @param {Cell[][]} cells
+ */
 function slideTiles(cells) {
     return Promise.all(
-        cells.flatMap(group => {
+        cells.flatMap(function (group) {
             const promises = [];
             for (let i = 1; i < group.length; i++) {
                 const cell = group[i];
@@ -352,8 +526,7 @@ function slideTiles(cells) {
                     promises.push(cell.tile.waitForTransition());
                     if (lastValidCell.tile != null) {
                         lastValidCell.mergeTile = cell.tile;
-                    }
-                    else {
+                    } else {
                         lastValidCell.tile = cell.tile;
                     }
                     cell.tile = null;
@@ -369,7 +542,9 @@ function canMoveUp() {
 }
 
 function canMoveDown() {
-    return canMove(grid.cellsByColumns.map((column) => [...column].reverse()));
+    return canMove(grid.cellsByColumns.map(function (column) {
+        return [...column].reverse();
+    }));
 }
 
 function canMoveLeft() {
@@ -377,12 +552,19 @@ function canMoveLeft() {
 }
 
 function canMoveRight() {
-    return canMove(grid.cellsByRows.map(row => [...row].reverse()));
+    return canMove(grid.cellsByRows.map(function (row) {
+        return [...row].reverse();
+    }));
 }
 
+/**
+ * Kiểm tra xem người chơi có thể di chuyển bảng theo hướng nhất định hay không, bằng cách kiểm tra khả năng di chuyển các ô của mảng 2 chiều được truyền vào
+ * @param {Cell[][]} cells
+ * @return boolean
+ */
 function canMove(cells) {
-    return cells.some(group => {
-        return group.some((cell, index) => {
+    return cells.some(function (group) {
+        return group.some(function (cell, index) {
             if (index === 0) {
                 return false;
             }
@@ -391,6 +573,8 @@ function canMove(cells) {
             }
             const moveToCell = group[index - 1];
             return moveToCell.canAccept(cell.tile);
-        })
-    })
+        });
+    });
 }
+
+initial();

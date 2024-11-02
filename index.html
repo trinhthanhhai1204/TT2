@@ -19,16 +19,16 @@
     <div class="score">
         <h1 id="score__game-title">2048</h1>
         <div id="score__container">
-            <div id="score__current-score--container">
-                <div id="score__current-score--wrapper">
-                    <p id="score__current-score--title">SCORE</p>
-                    <p id="score__current-score--value">0</p>
+            <div class="score__score--container" id="score__current-score--container">
+                <div class="score__score--wrapper" id="score__current-score--wrapper">
+                    <p class="score__score--title" id="score__current-score--title">SCORE</p>
+                    <p class="score__score--value" id="score__current-score--value">0</p>
                 </div>
             </div>
-            <div id="score__highest-score--container">
-                <div id="score__highest-score--wrapper">
-                    <p id="score__highest-score--title">BEST</p>
-                    <p id="score__highest-score--value">0</p>
+            <div class="score__score--container" id="score__highest-score--container">
+                <div class="score__score--wrapper" id="score__highest-score--wrapper">
+                    <p class="score__score--title" id="score__highest-score--title">BEST</p>
+                    <p class="score__score--value" id="score__highest-score--value">0</p>
                 </div>
             </div>
         </div>
@@ -42,6 +42,52 @@
     <div class="main">
         <div id="game-board">
 
+        </div>
+    </div>
+    <div class="action">
+        <div class="action__wrapper">
+            <div class="action__help-wrapper disable" id="action__undo-wrapper">
+                <div class="action__help-icon-wrapper">
+                    <i class="action__help-icon fa-solid fa-arrow-turn-up" style="transform: rotate(-90deg)"></i>
+                    <div class="action__help-icon--count-container">
+                        <span class="action__help-icon--count">1</span>
+                    </div>
+                </div>
+                <div class="action__help-info-wrapper">
+                    <div class="action__help-info-content">
+                        <p class="action__help-info-title">UNDO</p>
+                        <p class="action__help-info-remain">1 LEFT</p>
+                    </div>
+                </div>
+            </div>
+            <div class="action__help-wrapper" id="action__swap-wrapper">
+                <div class="action__help-icon-wrapper">
+                    <i class="action__help-icon fas fa-exchange-alt"></i>
+                    <div class="action__help-icon--count-container">
+                        <span class="action__help-icon--count">1</span>
+                    </div>
+                </div>
+                <div class="action__help-info-wrapper">
+                    <div class="action__help-info-content">
+                        <p class="action__help-info-title">SWAP TWO TILES</p>
+                        <p class="action__help-info-remain">1 LEFT</p>
+                    </div>
+                </div>
+            </div>
+            <div class="action__help-wrapper" id="action__delete-wrapper">
+                <div class="action__help-icon-wrapper">
+                    <i class="action__help-icon fas fa-xmark"></i>
+                    <div class="action__help-icon--count-container">
+                        <span class="action__help-icon--count">1</span>
+                    </div>
+                </div>
+                <div class="action__help-info-wrapper">
+                    <div class="action__help-info-content">
+                        <p class="action__help-info-title">DELETE A TILE</p>
+                        <p class="action__help-info-remain">1 LEFT</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
